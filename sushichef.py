@@ -108,7 +108,7 @@ class HTMLApp(object):
             for img_src, img_filename in images.items():
                 try:
                     zipper.write_url(img_src, img_filename, directory=self.page.extra_files_path)
-                except (requests.exceptions.HTTPError, requests.exceptions.SSLError):
+                except (requests.exceptions.HTTPError, requests.exceptions.SSLError, requests.exceptions.ConnectionError):
                     pass
 
     def write_pdfs(self):
@@ -625,7 +625,8 @@ class LocalJSFile(object):
         self.filename = get_name_from_url(source_id)
         self.pwd = source_id.split("/")[:-1]
         self.source_id = self.pwd2url()
-        self.filepath = os.path.join(*self.pwd, self.filename)
+        path = self.pwd + [self.filename]
+        self.filepath = os.path.join(*path)
         self.lang = lang
         self.license = get_license(licenses.CC_BY_SA, copyright_holder=COPYRIGHT_HOLDER).as_dict()
         self.zip_filepath = None
